@@ -237,7 +237,7 @@ describe('PUT /users/:uid', () => {
       body: { password: 'garmadon' },
     })
       .then((resp) => expect(resp.status).toBe(200))
-      .then(() => fetch('/auth', {
+      .then(() => fetch('/login', {
         method: 'POST',
         body: { email: 'test@test.test', password: 'garmadon' },
       }))

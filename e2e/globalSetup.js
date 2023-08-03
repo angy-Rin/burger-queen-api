@@ -20,7 +20,7 @@ const __e2e = {
   adminToken: null,
   testUserCredentials: {
     email: 'test@test.test',
-    password: '123456',
+    password: '123456'
   },
   testUserToken: null,
   childProcessPid: null,
@@ -52,7 +52,10 @@ const fetchWithAuth = (token) => (url, opts = {}) => fetch(url, {
   },
 });
 
-const fetchAsAdmin = (url, opts) => fetchWithAuth(__e2e.adminToken)(url, opts);
+const fetchAsAdmin = (url, opts) => { 
+  console.log(__e2e.adminToken);
+  return fetchWithAuth(__e2e.adminToken)(url, opts)
+}
 const fetchAsTestUser = (url, opts) => fetchWithAuth(__e2e.testUserToken)(url, opts);
 
 const createTestUser = () => fetchAsAdmin('/users', {
@@ -73,7 +76,9 @@ const createTestUser = () => fetchAsAdmin('/users', {
   })
   .then(({ token }) => Object.assign(__e2e, { testUserToken: token }));
 
-const checkAdminCredentials = () => fetch('/login', {
+const checkAdminCredentials = () => {
+  console.log("hola check")
+  return fetch('/login', {
   method: 'POST',
   body: __e2e.adminUserCredentials,
 })
@@ -84,7 +89,15 @@ const checkAdminCredentials = () => fetch('/login', {
 
     return resp.json();
   })
-  .then(({ token }) => Object.assign(__e2e, { adminToken: token }));
+  .then(({ accessToken }) => {
+    console.log("en el then ", accessToken)
+    return Object.assign(__e2e, { adminToken: accessToken })
+  })
+  .catch(error => {
+    console.log("console catch", error)
+    throw new error("HOlaaaaa Error catch")
+  })
+};
 
 const waitForServerToBeReady = (retries = 10) => new Promise((resolve, reject) => {
   if (!retries) {
@@ -145,7 +158,7 @@ module.exports = () => new Promise((resolve, reject) => {
       .then(createTestUser)
       .then(resolve)
       .catch((err) => {
-        console.log('there was an error');
+        console.log('there was an error HOLAAA');
         kill(child.pid, 'SIGKILL', () => reject(err));
       })
     }).catch((error)=> console.log(error));

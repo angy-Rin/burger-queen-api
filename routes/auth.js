@@ -22,7 +22,7 @@ module.exports = (app, nextMain) => {
    * @code {400} si no se proveen `email` o `password` o ninguno de los dos
    * @auth No requiere autenticación
    */
-  app.post('/auth', async (req, resp, next) => {
+  app.post('/login', async (req, resp, next) => {
     if (!req.body.email || !req.body.password) {
       return next(400);
     }

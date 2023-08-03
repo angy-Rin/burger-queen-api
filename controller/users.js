@@ -21,6 +21,7 @@ module.exports = {
     next();
   },
   postUser: async (req, resp, next) => {
+    console.log('llego aqui');
     const credentials = {
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 10),
@@ -35,7 +36,7 @@ module.exports = {
       const user = await collection.findOne({ email: req.body.email });
       if (!user) {
         await collection.insertOne(credentials);
-        resp.send('se agrego nuevo usuario');
+        resp.status(200).send('se agrego nuevo usuario');
       } else {
         resp.send('ya existe el usuario');
       }

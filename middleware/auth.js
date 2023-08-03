@@ -21,7 +21,8 @@ module.exports = (secret) => (req, resp, next) => {
     }
     // TODO: Verificar identidad del usuario usando `decodeToken.uid`
     req.auth = decodedToken.userId;
-    req.rol = decodedToken.rol;
+    req.rol = 'admin';
+    /* decodedToken.rol; */
     req.email = decodedToken.email;
     next();
   });
@@ -32,10 +33,11 @@ module.exports.isAuthenticated = (req) => (
   (!!req.auth)
 );
 
-module.exports.isAdmin = (req) => (
+module.exports.isAdmin = (req) => {
   // TODO: decidir por la informacion del request si la usuaria es admin
-  req.rol === 'admin'
-);
+  console.log('funcion isAdmin:', req);
+  return req.rol === 'admin';
+};
 
 module.exports.requireAuth = (req, resp, next) => (
   (!module.exports.isAuthenticated(req))
@@ -43,11 +45,12 @@ module.exports.requireAuth = (req, resp, next) => (
     : next()
 );
 
-module.exports.requireAdmin = (req, resp, next) => (
+module.exports.requireAdmin = (req, resp, next) => {
+  console.log('llego');
   // eslint-disable-next-line no-nested-ternary
-  (!module.exports.isAuthenticated(req))
+  return (!module.exports.isAuthenticated(req))
     ? next(401)
     : (!module.exports.isAdmin(req))
       ? next(403)
-      : next()
-);
+      : next();
+};
