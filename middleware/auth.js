@@ -13,7 +13,7 @@ module.exports = (secret) => (req, resp, next) => {
     return next();
   }
 
-  // esta funcion se ejecuta en cualquier tipo de breakpoint y verifica el token de la petición
+  // esta funcion se ejecuta en cualquier tipo de endpoint y verifica el token de la petición
 
   jwt.verify(token, secret, (err, decodedToken) => {
     if (err) {
@@ -33,11 +33,10 @@ module.exports.isAuthenticated = (req) => (
   (!!req.auth)
 );
 
-module.exports.isAdmin = (req) => {
+module.exports.isAdmin = (req) => (
   // TODO: decidir por la informacion del request si la usuaria es admin
-  console.log('funcion isAdmin:', req);
-  return req.rol === 'admin';
-};
+  req.rol === 'admin'
+);
 
 module.exports.requireAuth = (req, resp, next) => (
   (!module.exports.isAuthenticated(req))

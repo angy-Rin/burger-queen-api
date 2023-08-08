@@ -52,8 +52,7 @@ const fetchWithAuth = (token) => (url, opts = {}) => fetch(url, {
   },
 });
 
-const fetchAsAdmin = (url, opts) => { 
-  console.log(__e2e.adminToken);
+const fetchAsAdmin = (url, opts) => {
   return fetchWithAuth(__e2e.adminToken)(url, opts)
 }
 const fetchAsTestUser = (url, opts) => fetchWithAuth(__e2e.testUserToken)(url, opts);
@@ -77,7 +76,6 @@ const createTestUser = () => fetchAsAdmin('/users', {
   .then(({ token }) => Object.assign(__e2e, { testUserToken: token }));
 
 const checkAdminCredentials = () => {
-  console.log("hola check")
   return fetch('/login', {
   method: 'POST',
   body: __e2e.adminUserCredentials,
@@ -90,11 +88,9 @@ const checkAdminCredentials = () => {
     return resp.json();
   })
   .then(({ accessToken }) => {
-    console.log("en el then ", accessToken)
     return Object.assign(__e2e, { adminToken: accessToken })
   })
   .catch(error => {
-    console.log("console catch", error)
     throw new error("HOlaaaaa Error catch")
   })
 };
@@ -158,7 +154,6 @@ module.exports = () => new Promise((resolve, reject) => {
       .then(createTestUser)
       .then(resolve)
       .catch((err) => {
-        console.log('there was an error HOLAAA');
         kill(child.pid, 'SIGKILL', () => reject(err));
       })
     }).catch((error)=> console.log(error));

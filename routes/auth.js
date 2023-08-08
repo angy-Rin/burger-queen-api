@@ -38,7 +38,7 @@ module.exports = (app, nextMain) => {
       }
       const validPassword = await bcrypt.compare(req.body.password, user.password);
       if (!validPassword) resp.send('Invalid Email or Password.');
-      const accessToken = jwt.sign({ userId: user._id, rol: user.role, email: user.email }, secret);
+      const accessToken = jwt.sign({ userId: user._id, rol: user.rol, email: user.email }, secret);
       resp.status(200).json({ accessToken });
     } catch (err) {
       /* d */

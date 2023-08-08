@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const bcrypt = require('bcrypt');
 const config = require('../config');
 
@@ -21,7 +20,6 @@ module.exports = {
     next();
   },
   postUser: async (req, resp, next) => {
-    console.log('llego aqui');
     const credentials = {
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 10),
@@ -42,6 +40,29 @@ module.exports = {
       }
     } catch (error) {
       /*  */
+    }
+    next();
+  },
+  getUser: async (req, resp, next) => {
+    const userIdOrEmail = req.params.uid;
+    try {
+      const client = new MongoClient(dbUrl);
+      await client.connect();
+      const db = client.db();
+      const collection = db.collection('users');
+
+      const user = await collection.findOne({
+        $or: [{ email: userIdOrEmail }, { _id: new ObjectId(userIdOrEmail) }],
+      });
+      if (!user) {
+        console.log('wuat');
+        resp.status(404).send('there is no user with that uid');
+      } else {
+        resp.send(user);
+      }
+      client.close();
+    } catch (error) {
+      console.log(error);
     }
     next();
   },
