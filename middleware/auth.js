@@ -21,7 +21,7 @@ module.exports = (secret) => (req, resp, next) => {
     }
     // TODO: Verificar identidad del usuario usando `decodeToken.uid`
     req.auth = decodedToken.userId;
-    req.rol = 'admin';
+    req.rol = decodedToken.rol;
     /* decodedToken.rol; */
     req.email = decodedToken.email;
     next();
