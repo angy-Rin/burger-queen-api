@@ -11,6 +11,7 @@ const {
   getUsers,
   postUser,
   getUser,
+  patchUser,
 } = require('../controller/users');
 
 const initAdminUser = async (app, next) => {
@@ -135,10 +136,10 @@ module.exports = (app, next) => {
   app.post('/users', requireAdmin, postUser);
 
   /**
-   * @name PUT /users
+   * @name PATCH /users
    * @description Modifica una usuaria
    * @params {String} :uid `id` o `email` de la usuaria a modificar
-   * @path {PUT} /users
+   * @path {PATCH} /users
    * @body {String} email Correo
    * @body {String} password Contraseña
    * @body {Object} [roles]
@@ -156,8 +157,7 @@ module.exports = (app, next) => {
    * @code {403} una usuaria no admin intenta de modificar sus `roles`
    * @code {404} si la usuaria solicitada no existe
    */
-  app.put('/users/:uid', requireAuth, (req, resp, next) => {
-  });
+  app.patch('/users/:uid', requireAuth, patchUser);
 
   /**
    * @name DELETE /users

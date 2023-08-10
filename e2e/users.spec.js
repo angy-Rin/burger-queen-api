@@ -155,7 +155,7 @@ describe('POST /users', () => {
       body: {
         email: 'test1@test.test',
         password: '12345',
-        roles: { admin: false },
+        rol: { admin: false },
       },
     })
       .then((resp) => {
@@ -166,8 +166,8 @@ describe('POST /users', () => {
         expect(typeof json._id).toBe('string');
         expect(typeof json.email).toBe('string');
         expect(typeof json.password).toBe('undefined');
-        expect(typeof json.roles).toBe('object');
-        expect(json.roles.admin).toBe(false);
+        expect(typeof json.rol).toBe('object');
+        expect(json.rol.admin).toBe(false);
       })
   ));
 
@@ -177,7 +177,7 @@ describe('POST /users', () => {
       body: {
         email: 'admin1@test.test',
         password: '12345',
-        roles: { admin: true },
+        rol: { admin: true },
       },
     })
       .then((resp) => {
@@ -188,8 +188,8 @@ describe('POST /users', () => {
         expect(typeof json._id).toBe('string');
         expect(typeof json.email).toBe('string');
         expect(typeof json.password).toBe('undefined');
-        expect(typeof json.roles).toBe('object');
-        expect(json.roles.admin).toBe(true);
+        expect(typeof json.rol).toBe('object');
+        expect(json.rol.admin).toBe(true);
       })
   ));
 
@@ -202,38 +202,38 @@ describe('POST /users', () => {
   ));
 });
 
-describe('PUT /users/:uid', () => {
+describe('PATCH /users/:uid', () => {
   it('should fail with 401 when no auth', () => (
-    fetch('/users/foo@bar.baz', { method: 'PUT' })
+    fetch('/users/foo@bar.baz', { method: 'PATCH' })
       .then((resp) => expect(resp.status).toBe(401))
   ));
 
   it('should fail with 403 when not owner nor admin', () => (
-    fetchAsTestUser(`/users/${config.adminEmail}`, { method: 'PUT' })
+    fetchAsTestUser(`/users/${config.adminEmail}`, { method: 'PATCH' })
       .then((resp) => expect(resp.status).toBe(403))
   ));
 
   it('should fail with 404 when admin and not found', () => (
-    fetchAsAdmin('/users/abc@def.gih', { method: 'PUT' })
+    fetchAsAdmin('/users/abc@def.gih', { method: 'PATCH' })
       .then((resp) => expect(resp.status).toBe(404))
   ));
 
   it('should fail with 400 when no props to update', () => (
-    fetchAsTestUser('/users/test@test.test', { method: 'PUT' })
+    fetchAsTestUser('/users/test@test.test', { method: 'PATCH' })
       .then((resp) => expect(resp.status).toBe(400))
   ));
 
   it('should fail with 403 when not admin tries to change own roles', () => (
     fetchAsTestUser('/users/test@test.test', {
-      method: 'PUT',
+      method: 'PATCH',
       body: { roles: { admin: true } },
     })
       .then((resp) => expect(resp.status).toBe(403))
   ));
 
   it('should update user when own data (password change)', () => (
-    fetchAsTestUser('/users/test@test.test', {
-      method: 'PUT',
+    fetchAsAdmin('/users/test@test.test', {
+      method: 'PATCH',
       body: { password: 'garmadon' },
     })
       .then((resp) => expect(resp.status).toBe(200))
@@ -250,7 +250,7 @@ describe('PUT /users/:uid', () => {
 
   it('should update user when admin', () => (
     fetchAsAdmin('/users/test@test.test', {
-      method: 'PUT',
+      method: 'PATCH',
       body: { password: 'ohmygod' },
     })
       .then((resp) => expect(resp.status).toBe(200))

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const { MongoClient, ObjectId } = require('mongodb');
 const bcrypt = require('bcrypt');
 const config = require('../config');
@@ -66,9 +67,11 @@ module.exports = {
       }
       if (!user) {
         await collection.insertOne(credentials);
-        resp.status(200).send('se agrego nuevo usuario');
+        // eslint-disable-next-line max-len
+        const newuser = await collection.findOne({ email: req.body.email }, { projection: { password: 0 } });
+        resp.send(newuser);
       } else {
-        resp.send('ya existe el usuario');
+        next(403);
       }
     } catch (error) {
       console.log(error);
@@ -94,10 +97,44 @@ module.exports = {
         } else {
           resp.send(user);
         }
+      } else if (useremail.email !== req.email && req.rol !== 'admin') {
+        console.log(useremail.email, req.email);
+        next(403);
       } else {
         resp.send(useremail);
       }
       client.close();
+    } catch (error) {
+      console.log(error);
+    }
+    next();
+  },
+  patchUser: async (req, resp, next) => {
+    const userEmail = req.params.uid;
+    if (req.body.password) {
+      req.body.password = bcrypt.hashSync(req.body.password, 10);
+    }
+
+    const newCredentials = req.body;
+
+    try {
+      const client = new MongoClient(dbUrl);
+      await client.connect();
+      const db = client.db();
+      const collection = db.collection('users');
+
+      // eslint-disable-next-line max-len
+      const user = await collection.findOne({ email: (userEmail) });
+      if (!user) {
+        next(404);
+      } else if (user.email !== req.email) {
+        next(403);
+      } else {
+        // eslint-disable-next-line max-len
+        await collection.updateOne({ email: (userEmail) }, { $set: newCredentials });
+        const user1 = await collection.findOne({ email: (userEmail) }, { projection: { password: 0 } });
+        resp.send(user1);
+      }
     } catch (error) {
       console.log(error);
     }

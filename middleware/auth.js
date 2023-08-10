@@ -30,7 +30,7 @@ module.exports = (secret) => (req, resp, next) => {
 
 module.exports.isAuthenticated = (req) => (
   // TODO: decidir por la informacion del request si la usuaria esta autenticada
-  (!!req.auth)
+  (req.auth)
 );
 
 module.exports.isAdmin = (req) => (
@@ -44,12 +44,11 @@ module.exports.requireAuth = (req, resp, next) => (
     : next()
 );
 
-module.exports.requireAdmin = (req, resp, next) => {
-  console.log('llego');
+module.exports.requireAdmin = (req, resp, next) => (
   // eslint-disable-next-line no-nested-ternary
-  return (!module.exports.isAuthenticated(req))
+  (!module.exports.isAuthenticated(req))
     ? next(401)
     : (!module.exports.isAdmin(req))
       ? next(403)
-      : next();
-};
+      : next()
+);
