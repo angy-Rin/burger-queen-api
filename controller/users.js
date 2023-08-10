@@ -91,7 +91,7 @@ module.exports = {
       // });
       const useremail = await collection.findOne({ email: userIdOrEmail });
       if (!useremail) {
-        const user = await collection.findOne({ _id: new ObjectId(userIdOrEmail) });
+        const user = await collection.findOne({ _id: new ObjectId(parseInt(userIdOrEmail, 10)) });
         if (!user) {
           resp.status(404).send('there is no user with that uid');
         } else {
@@ -111,6 +111,9 @@ module.exports = {
   },
   patchUser: async (req, resp, next) => {
     const userEmail = req.params.uid;
+    if (req.rol !== 'admin') {
+      next(403);
+    }
     if (req.body.password) {
       req.body.password = bcrypt.hashSync(req.body.password, 10);
     }
@@ -126,17 +129,21 @@ module.exports = {
       // eslint-disable-next-line max-len
       const user = await collection.findOne({ email: (userEmail) });
       if (!user) {
+        client.close();
         next(404);
-      } else if (user.email !== req.email) {
-        next(403);
       } else {
+        if (Object.keys(req.body).length === 0) {
+          client.close();
+          next(400);
+        }
         // eslint-disable-next-line max-len
         await collection.updateOne({ email: (userEmail) }, { $set: newCredentials });
         const user1 = await collection.findOne({ email: (userEmail) }, { projection: { password: 0 } });
+        client.close();
         resp.send(user1);
       }
     } catch (error) {
-      console.log(error);
+      console.log('ERRRRRRROR:', error);
     }
     next();
   },
