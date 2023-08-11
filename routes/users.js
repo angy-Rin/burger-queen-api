@@ -12,6 +12,7 @@ const {
   postUser,
   getUser,
   patchUser,
+  deleteUser,
 } = require('../controller/users');
 
 const initAdminUser = async (app, next) => {
@@ -175,8 +176,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.delete('/users/:uid', requireAuth, (req, resp, next) => {
-  });
+  app.delete('/users/:uid', requireAuth, deleteUser);
 
   initAdminUser(app, next);
 };
