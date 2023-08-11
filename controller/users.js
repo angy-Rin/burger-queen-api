@@ -149,8 +149,10 @@ module.exports = {
   },
   deleteUser: async (req, resp, next) => {
     const userEmail = req.params.uid;
-
+    console.log('EMAIL:', userEmail);
+    console.log('EMAIL:', req.email);
     if (userEmail.email !== req.email && req.rol !== 'admin') {
+      console.log('ENTRO:', req.email, 'OTRO EMAIL:', userEmail);
       next(403);
     }
 
@@ -163,12 +165,11 @@ module.exports = {
       // eslint-disable-next-line max-len
       const user = await collection.findOne({ email: (userEmail) });
       if (!user) {
-        client.close();
         next(404);
       } else {
-        await collection.deleteUser(user);
-        console.log('se elimino');
-        resp.send('se eliminó');
+        await collection.deleteOne(user);
+        console.log('se elimino:', req.auth, req.rol, req.email);
+        resp.status(200).send('se eliminó');
       }
     } catch (error) {
       console.log(error);
