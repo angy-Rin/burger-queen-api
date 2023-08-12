@@ -149,10 +149,7 @@ module.exports = {
   },
   deleteUser: async (req, resp, next) => {
     const userEmail = req.params.uid;
-    console.log('EMAIL:', userEmail);
-    console.log('EMAIL:', req.email);
-    if (userEmail.email !== req.email && req.rol !== 'admin') {
-      console.log('ENTRO:', req.email, 'OTRO EMAIL:', userEmail);
+    if (userEmail !== req.email && req.rol !== 'admin') {
       next(403);
     }
 

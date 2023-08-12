@@ -44,11 +44,11 @@ const fetch = (url, opts = {}) => import('node-fetch')
     ),
   }));
 
-const fetchWithAuth = (token) => (url, opts = {}) => fetch(url, {
+const fetchWithAuth = (accessToken) => (url, opts = {}) => fetch(url, {
   ...opts,
   headers: {
     ...opts.headers,
-    authorization: `Bearer ${token}`,
+    authorization: `Bearer ${accessToken}`,
   },
 });
 
