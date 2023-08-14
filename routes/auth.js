@@ -34,12 +34,12 @@ module.exports = (app, nextMain) => {
       const collection = db.collection('users');
       const user = await collection.findOne({ email: req.body.email });
       if (!user) {
-        resp.send('Invalid Email or Password.');
+        return resp.send('Invalid Email or Password.');
       }
       const validPassword = await bcrypt.compare(req.body.password, user.password);
       if (!validPassword) resp.send('Invalid Email or Password.');
       const accessToken = jwt.sign({ userId: user._id, rol: user.rol, email: user.email }, secret);
-      resp.status(200).json({ accessToken });
+      return resp.status(200).json({ accessToken });
     } catch (err) {
       /* d */
     }
@@ -48,7 +48,6 @@ module.exports = (app, nextMain) => {
     // Hay que confirmar si el email y password
     // coinciden con un user en la base de datos
     // Si coinciden, manda un access token creado con jwt
-    next();
   });
 
   return nextMain();

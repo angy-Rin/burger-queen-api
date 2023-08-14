@@ -35,7 +35,6 @@ const initAdminUser = async (app, next) => {
     const user = await collection.findOne({ email: adminUser.email });
     if (!user) {
       await collection.insertOne(adminUser);
-      console.log('se agrego un usuario admin');
     } else {
       console.log('error al agregar usuario admin');
     }
@@ -43,7 +42,7 @@ const initAdminUser = async (app, next) => {
     client.close();
     return next();
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
