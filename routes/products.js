@@ -8,6 +8,8 @@ const {
   postProduct,
   getProducts,
   getProduct,
+  patchProduct,
+  deleteProduct,
 } = require('../controller/products');
 
 /** @module products */
@@ -102,8 +104,7 @@ module.exports = (app, nextMain) => {
    * @code {403} si no es admin
    * @code {404} si el producto con `productId` indicado no existe
    */
-  app.put('/products/:productId', requireAdmin, (req, resp, next) => {
-  });
+  app.patch('/products/:productId', requireAdmin, patchProduct);
 
   /**
    * @name DELETE /products
@@ -123,8 +124,7 @@ module.exports = (app, nextMain) => {
    * @code {403} si no es ni admin
    * @code {404} si el producto con `productId` indicado no existe
    */
-  app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
-  });
+  app.delete('/products/:productId', requireAdmin, deleteProduct);
 
   nextMain();
 };

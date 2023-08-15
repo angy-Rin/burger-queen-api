@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const { ObjectId } = require('mongodb');
 const { connect } = require('../connect');
 
@@ -32,9 +33,41 @@ module.exports = {
     try {
       const collection = await connect('products');
       const product = await collection.findOne({ _id: new ObjectId(productId) });
+      if (!product) {
+        return next(404);
+      }
       return resp.status(200).send(product);
     } catch (error) {
       return next(404);
     }
+  },
+  patchProduct: async (req, resp, next) => {
+    const { productId } = req.params;
+    const newCredentials = req.body;
+    try {
+      if (req.body.price && !Number(req.body.price)) {
+        return next(400);
+      }
+      const collection = await connect('products');
+      const product = await collection.findOneAndUpdate({ _id: new ObjectId(productId) }, { $set: newCredentials });
+      const changedProduct = await collection.findOne({ _id: new ObjectId(product.value._id) });
+      resp.status(200).send(changedProduct);
+    } catch (error) {
+      return next(404);
+    }
+  },
+  deleteProduct: async (req, resp, next) => {
+    const { productId } = req.params;
+    try {
+      const collection = await connect('products');
+      const user = await collection.findOneAndDelete({ _id: new ObjectId(productId) });
+      if (!user) {
+        return next(404);
+      }
+      return resp.status(200).send('it was deleted');
+    } catch (error) {
+      /* */
+    }
+    next();
   },
 };

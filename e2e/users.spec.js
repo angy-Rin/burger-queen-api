@@ -214,7 +214,7 @@ describe('PATCH /users/:uid', () => {
   ));
 
   it('should fail with 404 when admin and not found', () => (
-    fetchAsAdmin('/users/abc@def.gih', { method: 'PATCH' })
+    fetchAsAdmin('/users/abc@def.gih', { method: 'PATCH', body: { password: '212345' } })
       .then((resp) => expect(resp.status).toBe(404))
   ));
 
