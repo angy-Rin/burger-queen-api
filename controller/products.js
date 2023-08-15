@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
 const { ObjectId } = require('mongodb');
 const { connect } = require('../connect');
@@ -30,17 +31,19 @@ module.exports = {
     }
   },
   getProduct: async (req, resp, next) => {
-    const productId = req.params.uid;
+    const { productId } = req.params;
+    console.log(productId);
     try {
       const collection = await connect('products');
       const product = await collection.findOne({ _id: new ObjectId(parseInt(productId, 10)) });
+
       if (!product) {
-        return next(404);
+        return resp.status(404).send('Product not found');
       }
-      return resp.status(200).send({ resp, product });
+
+      return resp.status(200).send(product);
     } catch (error) {
-      resp.send({ error });
-      next(404);
+      return resp.status(404);
     }
   },
 };
