@@ -64,7 +64,7 @@ module.exports = {
       const collection = await connect('users');
       const useremail = await collection.findOne({ email: userIdOrEmail });
       if (!useremail) {
-        const user = await collection.findOne({ _id: new ObjectId(userIdOrEmail) });
+        const user = await collection.findOne({ _id: new ObjectId(parseInt(userIdOrEmail, 10)) });
         if (!user) {
           return resp.status(404).send('there is no user with that uid');
         }
