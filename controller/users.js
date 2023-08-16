@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 const bcrypt = require('bcrypt');
+const { ObjectId } = require('mongodb');
 const { calculateTotalPages } = require('./utils');
 const { connect } = require('../connect');
 
@@ -63,7 +64,7 @@ module.exports = {
       const collection = await connect('users');
       const useremail = await collection.findOne({ email: userIdOrEmail });
       if (!useremail) {
-        const user = await collection.findOne({ _id: userIdOrEmail });
+        const user = await collection.findOne({ _id: new ObjectId(userIdOrEmail) });
         if (!user) {
           return resp.status(404).send('there is no user with that uid');
         }
